@@ -1,0 +1,67 @@
+backend:
+  name: github
+  repo: MoaazK/koc-cricket
+  branch: master
+  base_url: https://github.com
+  auth_scope: repo
+local_backend: true
+site_url: https://moaazk.github.io/koccricket
+publish_mode: editorial_workflow
+media_folder: public/uploads
+public_folder: /uploads
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: '-'
+collections:
+  - name: news
+    label: News
+    folder: src/content/news
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Publish Date, name: date, widget: datetime }
+      - { label: Cover Image, name: coverImage, widget: image, required: false }
+      - { label: YouTube Embed URL, name: youtube, widget: string, required: false }
+      - { label: Instagram URL, name: instagram, widget: string, required: false }
+      - { label: Body, name: body, widget: markdown }
+  - name: matches
+    label: Matches
+    folder: src/content/matches
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Match Date, name: matchDate, widget: datetime }
+      - { label: Competition, name: competition, widget: string }
+      - { label: Location, name: location, widget: string }
+      - label: Status
+        name: status
+        widget: select
+        options:
+          - Upcoming
+          - Next Match
+          - Final Score
+          - Postponed
+      - { label: Short Description, name: description, widget: text, required: false }
+      - { label: Button Label, name: ctaLabel, widget: string, default: "Add to Calendar" }
+      - { label: Button URL, name: ctaUrl, widget: string }
+      - { label: Body, name: body, widget: markdown, required: false }
+  - name: gallery
+    label: Gallery
+    folder: src/content/gallery
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: Type
+        name: type
+        widget: select
+        options:
+          - instagram
+          - youtube
+          - photo
+      - { label: Media URL, name: url, widget: string }
+      - { label: Description, name: description, widget: text, required: false }
