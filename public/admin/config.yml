@@ -4,8 +4,8 @@ backend:
   branch: master
   base_url: https://github.com
   auth_scope: repo
-local_backend: true
-site_url: https://moaazk.github.io/koccricket
+local_backend: false
+site_url: https://moaazk.github.io/koccricket/
 publish_mode: editorial_workflow
 media_folder: public/uploads
 public_folder: /uploads
