@@ -1,7 +1,7 @@
 backend:
   name: github
   repo: MoaazK/koc-cricket
-  branch: main
+  branch: master
   base_url: https://github.com
   auth_scope: repo
 local_backend: true
