@@ -1,11 +1,11 @@
 backend:
   name: github
   repo: MoaazK/koc-cricket
-  branch: master
+  branch: main
   base_url: https://github.com
   auth_scope: repo
 local_backend: false
-site_url: https://moaazk.github.io/koccricket/
+site_url: https://moaazk.github.io/koc-cricket/
 publish_mode: editorial_workflow
 media_folder: public/uploads
 public_folder: /uploads
