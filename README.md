@@ -1,43 +1,60 @@
-# Astro Starter Kit: Minimal
+# KOC Cricket Website
 
-```sh
-npm create astro@latest -- --template minimal
+Astro + Decap CMS starter tailored for the Koç University Cricket Club. It ships with news, schedule, gallery,
+and about pages plus free integrations for comments (giscus), Google Calendar embeds, and social media iframes.
+
+## Stack
+
+- [Astro](https://astro.build) static site (ideal for GitHub Pages)
+- Content collections powered by `src/content` + Markdown
+- [Decap CMS](https://decapcms.org/) for editing via `/admin`
+- [giscus](https://giscus.app) comments mapped to GitHub Discussions
+- Google Calendar + Instagram/YouTube embeds for zero-cost media
+
+## Getting started
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The dev server runs at http://localhost:4321. Edit Markdown inside `src/content` or publish via `/admin` (requires
+running `npx decap-server` locally for auth-free testing).
 
-## 🚀 Project Structure
+## Content model
 
-Inside of your Astro project, you'll see the following folders and files:
+| Collection | Location               | Purpose                          |
+|----------- |----------------------- |----------------------------------|
+| `news`     | `src/content/news`     | Weekly posts, match reports      |
+| `matches`  | `src/content/matches`  | Fixtures w/ calendar links       |
+| `gallery`  | `src/content/gallery`  | Instagram/YouTube/photo embeds   |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Every entry can be created in Markdown (frontmatter + body) or via Decap CMS.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## CMS setup
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+1. Create a GitHub Personal Access Token (classic) with `repo` scope and keep it in the Decap auth modal.
+2. Update `public/admin/config.yml` with your GitHub username/repo if different.
+3. Commit and push to `main`, then open `/admin` on the deployed site to publish content.
 
-Any static assets, like images, can be placed in the `public/` directory.
+`public/uploads` is the default media folder referenced by Decap, so add custom assets there.
 
-## 🧞 Commands
+## giscus configuration
 
-All commands are run from the root of the project, from a terminal:
+1. Visit https://giscus.app and pick the repo + category to back comments.
+2. Copy the repo ID + category ID into `.env` (see `.env.example`).
+3. Deploy; the news article pages will render the widget automatically.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Deployment (GitHub Pages)
 
-## 👀 Want to learn more?
+1. Push the repo to GitHub, then open **Settings → Pages**.
+2. Choose **Deploy from a branch** and select `main` + `/ (root)`.
+3. Update `astro.config.mjs` `site` + `base` if your username or repo name differs.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Optional GUI deploys (Netlify/Vercel) also work—just map the build command `npm run build` and output `dist/`.
+
+## Social media tips
+
+- Instagram: post match-day stories + reels, use the same handle handle (`@koccricket`).
+- LinkedIn Page: highlight leadership, academics, and match recaps weekly.
+- Embed Google Calendar on `/schedule` so visitors can add reminders instantly.

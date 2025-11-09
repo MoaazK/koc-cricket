@@ -1,16 +1,159 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MatchCard from '../components/MatchCard.astro';
+import NewsCard from '../components/NewsCard.astro';
+import { getCollection } from 'astro:content';
 
+const newsEntries = await getCollection('news');
+const matchEntries = await getCollection('matches');
+const galleryEntries = await getCollection('gallery');
+const base = import.meta.env.BASE_URL;
+
+const latestNews = [...newsEntries]
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+	.slice(0, 3);
+
+const now = new Date();
+const sortedMatches = [...matchEntries].sort(
+	(a, b) => a.data.matchDate.valueOf() - b.data.matchDate.valueOf()
+);
+const futureMatches = sortedMatches.filter((entry) => entry.data.matchDate >= now);
+const featuredMatches = (futureMatches.length ? futureMatches : sortedMatches).slice(0, 3);
+const nextMatch = futureMatches[0] ?? sortedMatches[0];
+const spotlightGallery = galleryEntries.slice(0, 3);
+
+const formatHeroDate = (date?: Date) =>
+	date
+		? new Intl.DateTimeFormat('en-GB', {
+			weekday: 'long',
+			month: 'long',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			timeZoneName: 'short',
+		}).format(date)
+		: '';
+
+const getInstagramEmbed = (url: string) => {
+	const trimmed = url.endsWith('/') ? url : `${url}/`;
+	return `${trimmed}embed`;
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="KOC Cricket | News, Matches & Media">
+	<section class="hero">
+		<p class="badge">KOC CRICKET</p>
+		<h1>Student energy. Istanbul cricket.</h1>
+		<p>
+			Weekly news drops, match previews, and the best photos + reels from the KOC Cricket family.
+		</p>
+		<div class="grid" style="gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+			<div class="card">
+				<p class="eyebrow">Next match</p>
+				{nextMatch ? (
+					<>
+						<h3>{nextMatch.data.title}</h3>
+						<p>{nextMatch.data.competition}</p>
+						<p>{nextMatch.data.location}</p>
+						<p>{formatHeroDate(nextMatch.data.matchDate)}</p>
+						<a class="button" href={nextMatch.data.ctaUrl} target="_blank" rel="noreferrer">
+							{nextMatch.data.ctaLabel}
+						</a>
+					</>
+				) : (
+					<p>Stay tuned—new fixtures arriving shortly.</p>
+				)}
+			</div>
+			<div class="card">
+				<p class="eyebrow">Join us</p>
+				<p>
+					Open training: Wednesdays 18:00 @ Indoor Center, Saturdays 10:00 @ Kuzey pitch.
+				</p>
+				<a class="button button--outline" href="https://chat.whatsapp.com/invite/koccricket" target="_blank" rel="noreferrer">
+					Join WhatsApp
+				</a>
+			</div>
+		</div>
+	</section>
+
+	<section>
+		<div class="section-heading" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;">
+			<div>
+				<p class="eyebrow">Weekly brief</p>
+				<h2>Latest news</h2>
+			</div>
+				<a class="button button--outline" href={`${base}news/`}>View all</a>
+		</div>
+		<div class="grid grid--three">
+			{latestNews.map((entry) => (
+				<NewsCard
+					key={entry.slug}
+					title={entry.data.title}
+					summary={entry.data.summary}
+					date={entry.data.date}
+					slug={entry.slug}
+					coverImage={entry.data.coverImage}
+				/>
+			))}
+		</div>
+	</section>
+
+	<section>
+		<p class="eyebrow">Fixtures</p>
+		<h2>Upcoming matches</h2>
+		<div class="grid grid--three">
+			{featuredMatches.map((match) => (
+				<MatchCard
+					key={match.slug}
+					title={match.data.title}
+					matchDate={match.data.matchDate}
+					competition={match.data.competition}
+					location={match.data.location}
+					status={match.data.status}
+					description={match.data.description}
+					cta={{ label: match.data.ctaLabel, url: match.data.ctaUrl }}
+				/>
+			))}
+		</div>
+	</section>
+
+	<section>
+		<p class="eyebrow">Media wall</p>
+		<h2>Photos & reels</h2>
+		<div class="grid grid--three">
+			{spotlightGallery.map((piece) => (
+				<article class="card gallery-embed" key={piece.slug}>
+					<h3>{piece.data.title}</h3>
+					<p>{piece.data.description}</p>
+					{piece.data.type === 'instagram' && (
+						<iframe
+							src={getInstagramEmbed(piece.data.url)}
+							height="420"
+							loading="lazy"
+							title={piece.data.title}
+						></iframe>
+					)}
+					{piece.data.type === 'youtube' && (
+						<iframe
+							src={piece.data.url}
+							height="320"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen
+						></iframe>
+					)}
+					{piece.data.type === 'photo' && <img src={piece.data.url} alt={piece.data.title} loading="lazy" />}
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="card" style="text-align:center;">
+		<p class="eyebrow">Spread the word</p>
+		<h2>Need a post? Submit it.</h2>
+		<p>
+			Use the Decap CMS admin panel at <code>/admin</code> to publish news, gallery drops, and match notes from
+			any browser.
+		</p>
+		<a class="button" href={`${base}admin/`} target="_blank" rel="noreferrer">Open CMS</a>
+	</section>
+</BaseLayout>

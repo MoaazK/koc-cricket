@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('news')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+<BaseLayout title="News | KOC Cricket" description="Weekly news, match reports, and campus cricket announcements.">
+	<section>
+		<p class="eyebrow">Newsroom</p>
+		<h1>All updates</h1>
+		<div class="grid grid--three" style="margin-top:2rem;">
+			{posts.map((post) => (
+				<NewsCard
+					key={post.slug}
+					title={post.data.title}
+					summary={post.data.summary}
+					date={post.data.date}
+					slug={post.slug}
+					coverImage={post.data.coverImage}
+				/>
+			))}
+		</div>
+	</section>
+</BaseLayout>

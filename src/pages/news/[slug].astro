@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GiscusComments from '../../components/GiscusComments.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('news');
+	return posts.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const formattedDate = new Intl.DateTimeFormat('en-GB', {
+	dateStyle: 'full',
+}).format(entry.data.date);
+---
+<BaseLayout title={`${entry.data.title} | KOC Cricket`} description={entry.data.summary}>
+	<article class="card">
+		<p class="eyebrow">{formattedDate}</p>
+		<h1>{entry.data.title}</h1>
+		<p>{entry.data.summary}</p>
+		{entry.data.coverImage && (
+			<img src={entry.data.coverImage} alt={entry.data.title} loading="lazy" style="margin:2rem 0;" />
+		)}
+		<Content />
+		{entry.data.youtube && (
+			<iframe
+				src={entry.data.youtube}
+				title="YouTube highlight"
+				loading="lazy"
+				width="100%"
+				height="420"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowfullscreen
+				style="margin-top:2rem; border:none; border-radius:1rem;"
+			></iframe>
+		)}
+		{entry.data.instagram && (
+			<iframe
+				src={`${entry.data.instagram}${entry.data.instagram.endsWith('/') ? '' : '/'}embed`}
+				title="Instagram embed"
+				loading="lazy"
+				width="100%"
+				height="480"
+				style="margin-top:2rem; border:none; border-radius:1rem;"
+			></iframe>
+		)}
+	</article>
+	<GiscusComments />
+</BaseLayout>

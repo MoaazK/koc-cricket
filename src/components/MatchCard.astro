@@ -1,0 +1,37 @@
+---
+interface Props {
+	title: string;
+	matchDate: Date;
+	competition: string;
+	location: string;
+	status?: string;
+	description?: string;
+	cta?: { label: string; url: string };
+}
+
+const { title, matchDate, competition, location, status = 'Upcoming', description, cta } =
+	Astro.props as Props;
+
+const formatted = new Intl.DateTimeFormat('en-GB', {
+	weekday: 'short',
+	day: 'numeric',
+	month: 'short',
+	hour: '2-digit',
+	minute: '2-digit',
+}).format(matchDate);
+---
+<article class="card match-card">
+	<div class="badge">{status}</div>
+	<h3>{title}</h3>
+	<div class="match-meta">
+		<span>{formatted}</span>
+		<span>{competition}</span>
+		<span>{location}</span>
+	</div>
+	{description && <p>{description}</p>}
+	{cta && (
+		<a class="button" href={cta.url} target="_blank" rel="noreferrer">
+			{cta.label}
+		</a>
+	)}
+</article>

@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const media = await getCollection('gallery');
+const getInstagramEmbed = (url: string) => {
+	const trimmed = url.endsWith('/') ? url : `${url}/`;
+	return `${trimmed}embed`;
+};
+---
+<BaseLayout title="Gallery | KOC Cricket" description="Instagram reels, YouTube highlights, and match-day photography.">
+	<section>
+		<p class="eyebrow">Media wall</p>
+		<h1>Photos, reels & highlights</h1>
+		<p>
+			Drop your best content in the CMS gallery collection—everything here lives in the Git repo, so it stays
+			free forever.
+		</p>
+	</section>
+
+	<section class="grid" style="margin-top:2rem;">
+		{media.map((piece) => (
+			<article class="card gallery-embed" key={piece.slug}>
+				<h2>{piece.data.title}</h2>
+				<p>{piece.data.description}</p>
+				{piece.data.type === 'instagram' && (
+					<iframe
+						src={getInstagramEmbed(piece.data.url)}
+						title={piece.data.title}
+						loading="lazy"
+						height="480"
+					></iframe>
+				)}
+				{piece.data.type === 'youtube' && (
+					<iframe
+						src={piece.data.url}
+						title={piece.data.title}
+						loading="lazy"
+						height="360"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowfullscreen
+					></iframe>
+				)}
+				{piece.data.type === 'photo' && (
+					<img src={piece.data.url} alt={piece.data.title} loading="lazy" />
+				)}
+			</article>
+		))}
+	</section>
+</BaseLayout>

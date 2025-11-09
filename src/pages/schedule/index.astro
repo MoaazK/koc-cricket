@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MatchCard from '../../components/MatchCard.astro';
+import { getCollection } from 'astro:content';
+
+const matches = (await getCollection('matches')).sort(
+	(a, b) => a.data.matchDate.valueOf() - b.data.matchDate.valueOf()
+);
+---
+<BaseLayout title="Schedule | KOC Cricket" description="Fixtures, training times, and calendar links for KOC Cricket.">
+	<section>
+		<p class="eyebrow">Fixtures</p>
+		<h1>Match schedule</h1>
+		<p>
+			Subscribe to the shared Google Calendar to get automatic reminders for every fixture, training,
+			and community event.
+		</p>
+	</section>
+
+	<section class="card" style="margin-top:2rem;">
+		<h2>Google Calendar embed</h2>
+		<p>Update the iframe URL with your public calendar link once it is ready.</p>
+		<div style="margin-top:1rem;">
+			<iframe
+				src="https://calendar.google.com/calendar/embed?src=koccricket%40gmail.com&ctz=Europe%2FIstanbul"
+				title="KOC Cricket Calendar"
+				style="width:100%; min-height:500px; border:0; border-radius:1rem;"
+				loading="lazy"
+			></iframe>
+		</div>
+		<a
+			class="button"
+			href="https://calendar.google.com/calendar/render?cid=koccricket%40gmail.com"
+			target="_blank"
+			rel="noreferrer"
+			style="margin-top:1rem; display:inline-flex;"
+		>
+			Add to Calendar
+		</a>
+	</section>
+
+	<section>
+		<h2 style="margin-top:3rem;">All fixtures</h2>
+		<div class="grid grid--three" style="margin-top:1.5rem;">
+			{matches.map((match) => (
+				<MatchCard
+					key={match.slug}
+					title={match.data.title}
+					matchDate={match.data.matchDate}
+					competition={match.data.competition}
+					location={match.data.location}
+					status={match.data.status}
+					description={match.data.description}
+					cta={{ label: match.data.ctaLabel, url: match.data.ctaUrl }}
+				/>
+			))}
+		</div>
+	</section>
+</BaseLayout>
